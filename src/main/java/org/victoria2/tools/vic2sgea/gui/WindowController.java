@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.victoria2.tools.vic2sgea.entities.Country;
+import org.victoria2.tools.vic2sgea.main.FlagLoader;
 import org.victoria2.tools.vic2sgea.main.PathKeeper;
 import org.victoria2.tools.vic2sgea.main.Report;
 import org.victoria2.tools.vic2sgea.main.TableRowDoubleClickFactory;
@@ -114,12 +115,10 @@ public class WindowController extends BaseController implements Initializable {
         mainTable.setItems(countryTableContent);
 
         colImage.setCellValueFactory(features -> {
-            String tag = features.getValue().getTag();
-            URL url = getClass().getResource("/flags/" + tag + ".png");
-            if (url == null)
+            Image image = FlagLoader.getFlag(features.getValue().getTag());
+            if (image == null)
                 return null;
 
-            Image image = new Image(url.toString());
             ImageView iv = new ImageView(image);
             iv.setPreserveRatio(true);
             iv.setFitHeight(20);
@@ -221,6 +220,7 @@ public class WindowController extends BaseController implements Initializable {
                     Path gamePath = fpGamePath.getPath();
 
                     PathKeeper.save(savePath, gamePath, modPath);
+                    FlagLoader.clearCache();
 
                     report = new Report(savePath.toString(), gamePath != null ? gamePath.toString() : null, modPath != null ? modPath.toString() : null);
 
